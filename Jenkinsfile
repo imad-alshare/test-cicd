@@ -14,9 +14,19 @@ pipeline {
         }
 
         stage ('Build') {
-            steps {
-                echo 'This is a minimal pipeline.'
+          steps {
+          sh 'mvn clean package'
+           }
+        }
+
+
+        stage ('Deploy to Tomcat') {
+          steps {
+            sshagent(['root']){
+                sh 'sshpass -p "P@ssw0rd" scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/webapp-cicd-pipeline/target/WebApp.war root@192.168.11.27:/root/prod/apache-tomcat-9.0.71/webapps/webapp.war'    
+
             }
+           }
         }
     }
 }
